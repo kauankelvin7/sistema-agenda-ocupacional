@@ -1,0 +1,295 @@
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Função auxiliar para verificar se é admin
+    function isAdmin() {
+      return request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+    }
+    
+    // Função auxiliar para verificar se é o próprio usuário
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Função auxiliar para verificar se é empresa dona do recurso
+    function isCompanyOwner(companyId) {
+      return request.auth != null && request.auth.uid == companyId;
+    }
+    
+    // Função auxiliar para verificar se é empresa ou admin
+    function isCompanyOrAdmin(companyId) {
+      return request.auth != null && (
+        request.auth.uid == companyId || 
+        isAdmin()
+      );
+    }
+    
+    // Função auxiliar para verificar se o usuário pode acessar dados da empresa
+    function canAccessCompanyData(companyId) {
+      return request.auth != null && (
+        request.auth.uid == companyId ||
+        isAdmin() ||
+        // Permitir acesso para busca de dados relacionados em agendamentos
+        exists(/databases/$(database)/documents/appointments/$(request.auth.uid))
+      );
+    }
+    
+    // REGRAS PARA USUÁRIOS
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow write: if isOwner(userId) || isAdmin();
+      allow create: if request.auth != null;
+      allow update: if isOwner(userId) || isAdmin();
+      allow delete: if isAdmin();
+      allow list: if isAdmin();
+      allow get: if isOwner(userId) || isAdmin();
+    }
+    
+    // REGRAS PARA EMPRESAS - CORRIGIDO PARA PERMITIR LEITURA NECESSÁRIA
+    match /companies/{companyId} {
+      // Permitir leitura ampla para busca em agendamentos
+      allow read: if request.auth != null;
+      allow list: if request.auth != null;
+      allow get: if request.auth != null;
+      allow write: if isCompanyOwner(companyId) || isAdmin();
+      allow create: if request.auth != null;
+      allow update: if isCompanyOwner(companyId) || isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // REGRAS PARA FUNCIONÁRIOS - CORRIGIDO PARA PERMITIR LEITURA NECESSÁRIA
+    match /employees/{employeeId} {
+      // Permitir leitura ampla para busca em agendamentos
+      allow read: if request.auth != null;
+      allow list: if request.auth != null;
+      allow get: if request.auth != null;
+      allow write: if request.auth != null && (
+        isCompanyOrAdmin(resource.data.companyId) ||
+        resource.data.companyId == request.auth.uid
+      );
+      allow create: if request.auth != null && (
+        isCompanyOrAdmin(request.resource.data.companyId) ||
+        request.resource.data.companyId == request.auth.uid
+      );
+      allow update: if request.auth != null && (
+        isCompanyOrAdmin(resource.data.companyId) ||
+        resource.data.companyId == request.auth.uid
+      );
+      allow delete: if request.auth != null && (
+        isCompanyOrAdmin(resource.data.companyId) ||
+        resource.data.companyId == request.auth.uid
+      );
+    }
+    
+    // REGRAS PARA AGENDAMENTOS - COMPLETAS E PERMISSIVAS
+    match /appointments/{appointmentId} {
+      allow read: if request.auth != null;
+      allow list: if request.auth != null;
+      allow get: if request.auth != null;
+      allow write: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null;
+      allow delete: if request.auth != null;
+    }
+    
+    // REGRAS PARA TIPOS DE EXAME
+    match /examTypes/{examTypeId} {
+      allow read: if request.auth != null;
+      allow list: if request.auth != null;
+      allow get: if request.auth != null;
+      allow write: if isAdmin();
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // REGRAS PARA LIMITES DE AGENDAMENTO
+    match /appointmentLimits/{limitId} {
+      allow read: if request.auth != null;
+      allow list: if request.auth != null;
+      allow get: if request.auth != null;
+      allow write: if isAdmin();
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // REGRAS PARA DATAS BLOQUEADAS
+    match /blockedDates/{dateId} {
+      allow read: if request.auth != null;
+      allow list: if request.auth != null;
+      allow get: if request.auth != null;
+      allow write: if isAdmin();
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // REGRAS PARA CAPACIDADE DA CLÍNICA
+    match /clinicCapacity/{capacityId} {
+      allow read: if request.auth != null;
+      allow list: if request.auth != null;
+      allow get: if request.auth != null;
+      allow write: if isAdmin();
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // REGRAS PARA HORÁRIOS BLOQUEADOS
+    match /blockedTimeSlots/{slotId} {
+      allow read: if request.auth != null;
+      allow list: if request.auth != null;
+      allow get: if request.auth != null;
+      allow write: if isAdmin();
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // REGRAS PARA LIMITES POR HORÁRIO
+    match /hourlyLimits/{limitId} {
+      allow read: if request.auth != null;
+      allow list: if request.auth != null;
+      allow get: if request.auth != null;
+      allow write: if isAdmin();
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // REGRAS PARA LIMITES DE SLOTS
+    match /slotLimits/{slotId} {
+      allow read: if request.auth != null;
+      allow list: if request.auth != null;
+      allow get: if request.auth != null;
+      allow write: if isAdmin();
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // REGRAS PARA NOTIFICAÇÕES
+    match /notifications/{notificationId} {
+      allow read: if request.auth != null && (
+        resource.data.recipientId == request.auth.uid || 
+        resource.data.recipientId == "all" ||
+        isAdmin()
+      );
+      allow list: if request.auth != null;
+      allow get: if request.auth != null && (
+        resource.data.recipientId == request.auth.uid || 
+        resource.data.recipientId == "all" ||
+        isAdmin()
+      );
+      allow write: if request.auth != null && (
+        resource.data.recipientId == request.auth.uid || 
+        resource.data.recipientId == "all" ||
+        isAdmin()
+      );
+      allow update: if request.auth != null && (
+        resource.data.recipientId == request.auth.uid || 
+        resource.data.recipientId == "all" ||
+        isAdmin()
+      );
+      allow create: if request.auth != null;
+      allow delete: if request.auth != null && (
+        resource.data.recipientId == request.auth.uid ||
+        isAdmin()
+      );
+    }
+    
+    // REGRAS PARA NOTIFICAÇÕES OCULTAS DO USUÁRIO
+    match /userHiddenNotifications/{userId} {
+      allow read: if request.auth != null && (
+        request.auth.uid == userId || isAdmin()
+      );
+      allow list: if request.auth != null && (
+        request.auth.uid == userId || isAdmin()
+      );
+      allow get: if request.auth != null && (
+        request.auth.uid == userId || isAdmin()
+      );
+      allow write: if request.auth != null && (
+        request.auth.uid == userId || isAdmin()
+      );
+      allow create: if request.auth != null;
+      allow update: if request.auth != null && (
+        request.auth.uid == userId || isAdmin()
+      );
+      allow delete: if request.auth != null && (
+        request.auth.uid == userId || isAdmin()
+      );
+    }
+    
+    // REGRAS PARA CONFIGURAÇÕES GERAIS DO SISTEMA
+    match /systemSettings/{settingId} {
+      allow read: if request.auth != null;
+      allow list: if request.auth != null;
+      allow get: if request.auth != null;
+      allow write: if isAdmin();
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // REGRAS PARA LOGS DO SISTEMA
+    match /systemLogs/{logId} {
+      allow read: if isAdmin();
+      allow list: if isAdmin();
+      allow get: if isAdmin();
+      allow write: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // REGRAS PARA ARQUIVOS/ANEXOS
+    match /attachments/{attachmentId} {
+      allow read: if request.auth != null;
+      allow list: if request.auth != null;
+      allow get: if request.auth != null;
+      allow write: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null;
+      allow delete: if request.auth != null;
+    }
+    
+    // REGRAS PARA ESTATÍSTICAS DE AGENDAMENTOS
+    match /appointmentStats/{statId} {
+      allow read: if request.auth != null;
+      allow list: if request.auth != null;
+      allow get: if request.auth != null;
+      allow write: if isAdmin();
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // REGRAS PARA BACKUP/ARQUIVO DE DADOS
+    match /archivedData/{archiveId} {
+      allow read: if isAdmin();
+      allow list: if isAdmin();
+      allow get: if isAdmin();
+      allow write: if isAdmin();
+      allow create: if isAdmin();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // REGRAS PARA AUDITORIA
+    match /auditLogs/{auditId} {
+      allow read: if isAdmin();
+      allow list: if isAdmin();
+      allow get: if isAdmin();
+      allow write: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+  }
+}

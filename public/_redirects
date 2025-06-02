@@ -1,0 +1,12 @@
+
+# Handle client-side routing
+/*    /index.html   200
+
+# Security redirects
+/api/*  /index.html  404
+/.env*  /index.html  404
+/config/*  /index.html  404
+
+# Cache static assets
+/static/*  /static/:splat  200  Cache-Control: public, max-age=31536000, immutable
+/assets/*  /assets/:splat  200  Cache-Control: public, max-age=31536000, immutable
