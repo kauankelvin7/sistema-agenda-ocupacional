@@ -101,8 +101,8 @@ const Login = () => {
   return (
     <div className="min-h-screen flex flex-col justify-center items-center px-4 bg-background">
       <div className="w-full max-w-md shadow-lg rounded-xl bg-white dark:bg-card px-6 py-8 space-y-6">
-        <div className="flex justify-center mb-4">
-          <img src="/uploads/logo.png" alt="Logo" className="h-16 w-16 rounded-full" />
+        <div className="flex justify-center mb-1">
+          <img src="/uploads/logo.png" alt="Logo" className="h-20 w-18 rounded-full" />
         </div>
         {/* Modal de recuperação de senha */}
         <SimpleModal open={forgotOpen} onClose={() => setForgotOpen(false)} title="Recuperar senha">
@@ -132,7 +132,7 @@ const Login = () => {
 
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">NovaAgenda</CardTitle>
+            <CardTitle className="text-2xl">MedSync</CardTitle>
           </CardHeader>
           <CardContent>
             <Form {...form}>

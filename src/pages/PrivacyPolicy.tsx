@@ -53,7 +53,7 @@ const PrivacyPolicy = () => {
           </p>
           <h3 className="text-lg font-semibold">8. Contato</h3>
           <p>
-            Em caso de dúvidas, entre em contato via e-mail: suporte@novaagenda.com.br
+            Em caso de dúvidas, entre em contato via e-mail: suporte@medsync.com.br
           </p>
         </CardContent>
       </Card>

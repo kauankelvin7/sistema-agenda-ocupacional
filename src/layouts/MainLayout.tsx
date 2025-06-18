@@ -272,8 +272,7 @@ const MainLayout = () => {
 
       <footer className="py-4 px-4 md:px-6 border-t text-xs md:text-sm text-center text-muted-foreground">
         <div className="max-w-7xl mx-auto">
-          <p>© {new Date().getFullYear()} NovaAgenda - Todos os direitos reservados</p>
-          <p>SDS, Bloco D, Ed. Eldorado, Entrada B, 1º. Subsolo Sala 01 Conic - Plano Piloto, Brasília - DF, 70391-901</p>
+          <p>© {new Date().getFullYear()} MedSync - Todos os direitos reservados</p>
           <div className="mt-2">
             <Link to="/privacy-policy" className="text-primary hover:underline">
               Política de Privacidade
