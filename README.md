@@ -154,7 +154,7 @@ Este é um projeto proprietário. Para mais informações sobre contribuições,
 
 Copyright © 2025 Kauan Kelvin. Todos os direitos reservados.
 
-Este software é licenciado sob uma licença proprietária. A sua utilização é estritamente limitada aos termos definidos pelo detentor dos direitos autorais - veja o arquivo [LICENSE](LICENSE) para detalhes.
+Este software é licenciado sob uma licença proprietária. A sua utilização é estritamente limitada aos termos definidos pelo detentor dos direitos autorais - veja o arquivo [LICENSE.md](LICENSE) para detalhes.
 
 - **Permissão de Visualização**: O código-fonte está disponível exclusivamente para fins de avaliação técnica e demonstração de portfólio
 - **Restrições**: É estritamente proibida a cópia, modificação, distribuição, sublicenciamento ou uso comercial deste software, no todo ou em parte, sem a autorização prévia e por escrito do detentor dos direitos autorais
