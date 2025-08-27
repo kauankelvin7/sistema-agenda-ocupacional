@@ -115,7 +115,16 @@ npm install
 cp .env.example .env
 ```
 
-4. Preencha as variáveis de ambiente com suas credenciais do Firebase no arquivo `.env`
+4. Preencha as variáveis de ambiente com suas credenciais do Firebase no arquivo nesse formato abaixo:
+`.env`
+```
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+```
 
 ### Scripts Disponíveis
 
